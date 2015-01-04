@@ -39,9 +39,20 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    User.find(params[:id]).destroy
-    flash[:success]= "User destroyed."
-    redirect_to users_url
+    #課題９．６．９にて書き変え
+    #User.find(params[:id]).destroy
+    #flash[:success]= "User destroyed."
+    #redirect_to users_url
+    #admin判定の条件分岐
+    user = User.find(params[:id])
+    if current_user? user
+      redirect_to(root_path)
+    else
+      user.destroy
+      flash[:success]= "User destroyed."
+      redirect_to users_url
+    end
+    #ここまで
   end
 
 

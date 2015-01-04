@@ -9,6 +9,10 @@ describe "Authentication" do
 
     it { should have_content('Sign in') }
     it { should have_title('Sign in') }
+    #課題９．６．３で追加
+    it { should_not have_link('Profile')}
+    it { should_not have_link('Settings')}
+    #９．６．３end
   end
   describe "signin" do
     before { visit signin_path }
@@ -18,6 +22,11 @@ describe "Authentication" do
 
       it { should have_title('Sign in') }
       it { should have_error_message('Invalid') }
+
+      #課題９．６．３で追加
+      it { should_not have_link('Profile')}
+      it { should_not have_link('Settings')}
+      #９．６．３end
 
       describe "after visiting another page" do
         before { click_link "Home" }
@@ -51,9 +60,11 @@ describe "Authentication" do
       describe "when attempting to visit a protected page" do
         before do
           visit edit_user_path(user)
-          fill_in "Email",    with: user.email
-          fill_in "Password", with: user.password
-          click_button "Sign in"
+          #課題９．６．４で削除と追加
+          #fill_in "Email",    with: user.email
+          #fill_in "Password", with: user.password
+          #click_button "Sign in"
+          sign_in user #サインインテストヘルパー(utilities.rb)で追加部分
         end
 
         describe "after signing in" do
@@ -81,6 +92,32 @@ describe "Authentication" do
           it { should have_title('Sign in') }
         end
       end
+
+      #課題９．６．６から９．６．８までで追加
+      describe "when attempting to visit a protected page" do
+        before do
+          visit edit_user_path(user)
+          sign_in user
+        end
+        describe "after signining in" do
+          it " should render the desired protected page" do
+            expect(page).to have_title('Edit user')
+          end
+
+          describe "when signing in again" do
+            before do
+              delete signout_path
+              visit signin_path
+              sign_in user
+            end
+
+            it "should render the default(profile)page" do
+              expect(page).to have_title(user.name)
+            end
+          end
+        end
+      end
+      #ここまで追加
     end
 
     describe "as wrong user" do
@@ -111,5 +148,17 @@ describe "Authentication" do
         specify{ expect(response).to redirect_to(root_path)}
       end
     end
+    #課題９．６．９で追加admin自身が自分を削除できないコード
+    describe "as an admin user" do
+      let(:admin){FactoryGirl.create(:admin)}
+      
+      before { sign_in admin,no_capybara:true}
+
+      describe "submitting a DELETE request to the Users#destroy action" do
+        before { delete user_path(admin)}
+        specify { expect(response).to redirect_to(root_path)}
+      end
+    end
+    #ここまで
   end
 end

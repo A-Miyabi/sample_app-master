@@ -4,7 +4,9 @@
 <div class="row">
   <div class="span6 offset3">
     <%= form_for(@user) do |f| %>
-     <%= render 'shared/error_messages' %>
+
+    <!-- 課題９．６．５の９．５０で書き変え  
+      <%= render 'shared/error_messages' %>
 
       <%= f.label :name %>
       <%= f.text_field :name %>
@@ -16,7 +18,9 @@
       <%= f.password_field :password %>
 
       <%= f.label :password_confirmation, "Confirmation" %>
-      <%= f.password_field :password_confirmation %>
+      <%= f.password_field :password_confirmation %> -->
+      <%= render'fields',f: f %>
+      <!-- 9.50で追加 -->
 
       <%= f.submit "Create my account", class: "btn btn-large btn-primary" %>
     <% end %>

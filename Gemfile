@@ -12,6 +12,7 @@ source 'https://rubygems.org'
   
 
 # Use sqlite3 as the database for Active Record
+
 group :development, :test do
   gem 'sqlite3', '1.3.8'
   gem 'rspec-rails', '~> 2.14.0.rc1'
